@@ -22,8 +22,8 @@ const Navbar = () => {
           textTransform={"uppercase"}
           textAlign={"center"}
           bgGradient="to-r"
-          gradientFrom="red.200"
-          gradientTo="blue.200"
+          gradientFrom={colorMode === "dark" ? "red.200" : "red.400"}
+          gradientTo={colorMode === "dark" ? "blue.200" : "blue.400"}
           bgClip="text"
         >
           <Text>Product Store 🛒</Text>

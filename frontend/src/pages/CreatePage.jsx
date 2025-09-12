@@ -7,6 +7,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { toaster, Toaster } from "../components/ui/toaster";
 import { useColorModeValue } from "../components/ui/color-mode";
 import { useProductStore } from "../store/product";
 const CreatePage = () => {
@@ -18,8 +19,22 @@ const CreatePage = () => {
   const { createProduct } = useProductStore();
   const handleAddProduct = async () => {
     const { success, message } = await createProduct(newProduct);
-    console.log("Succes: ", success);
-    console.log("Message: ", message);
+    if (!success) {
+      toaster.create({
+        description: "Error creating product!",
+        type: "error",
+        duration: 3000,
+        closable: true,
+      });
+    } else {
+      toaster.create({
+        description: "Product created succesfully!",
+        type: "success",
+        duration: 3000,
+        closable: true,
+      });
+    }
+    setNewProduct({ name: "", price: "", image: "" });
   };
   return (
     <Container maxW={"container.sm"}>
@@ -48,12 +63,11 @@ const CreatePage = () => {
               placeholder="Product Price"
               name="price"
               value={newProduct.price}
-              onChange={
-                (e) =>
-                  setNewProduct({
-                    ...newProduct,
-                    price: Number(e.target.value),
-                  }) 
+              onChange={(e) =>
+                setNewProduct({
+                  ...newProduct,
+                  price: e.target.value,
+                })
               }
             />
 
@@ -71,6 +85,7 @@ const CreatePage = () => {
           </VStack>
         </Box>
       </VStack>
+      <Toaster />
     </Container>
   );
 };

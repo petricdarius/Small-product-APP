@@ -7,12 +7,31 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { MdEdit, MdDelete } from "react-icons/md";
-import { CloseButton } from "@chakra-ui/react";
 import { useColorModeValue } from "./ui/color-mode";
+import { useProductStore } from "../store/product";
+import { toaster } from "../components/ui/toaster";
 
 const ProductCard = ({ product }) => {
-  const textColor = useColorModeValue("gray.600", "gray.200")
-  const bg = useColorModeValue("white", "gray.800")
+  const textColor = useColorModeValue("gray.600", "gray.200");
+  const bg = useColorModeValue("white", "gray.800");
+  const { deleteProduct } = useProductStore();
+  const handleDeleteProduct = async (pid) => {
+    const { success, message } = await deleteProduct(pid);
+    if (!success) {
+      toaster.create({
+        description: "Error deleting product!",
+        type: "error",
+        duration: 3000,
+        closable: true,
+      });
+    } else
+      toaster.create({
+        description: "Product deleted succesfully!",
+        type: "success",
+        duration: 3000,
+        closable: true,
+      });
+  };
   return (
     <Box
       shadow={"lg"}
@@ -46,6 +65,7 @@ const ProductCard = ({ product }) => {
           />
           <IconButton
             aria-label="Delete product"
+            onClick={() => handleDeleteProduct(product._id)}
             icon={<MdDelete />}
             bg="red.400"
             _hover={{ bg: "red.500" }}

@@ -4,6 +4,8 @@ import { Link as RouterLink } from "react-router-dom";
 import { useEffect } from "react";
 import { useProductStore } from "../store/product";
 import ProductCard from "../components/ProductCard";
+import { Toaster } from "../components/ui/toaster";
+
 const HomePage = () => {
   const { fetchProducts, products } = useProductStore();
   useEffect(() => {
@@ -12,7 +14,7 @@ const HomePage = () => {
   console.log(products);
   const { colorMode, toggleColorMode } = useColorMode();
   return (
-    <Container maxW={"4xl"} py={12}>
+    <Container maxW={"6xl"} py={12}>
       <VStack spacing={8}>
         <Text
           fontSize={30}
@@ -41,25 +43,28 @@ const HomePage = () => {
           ))}
         </SimpleGrid>
 
-        <Text
-          fontSize={"xl"}
-          textAlign={"center"}
-          fontWeight={"bold"}
-          color="gray.500"
-        >
-          No products found :/
-          <Link as={RouterLink} to={"/create"}>
-            <Text
-              marginStart={"15px"}
-              as={"span"}
-              color={"blue.500"}
-              _hover={{ textDecoration: "underline" }}
-            >
-              Create a Product
-            </Text>
-          </Link>
-        </Text>
+        {products.length === 0 && (
+          <Text
+            fontSize={"xl"}
+            textAlign={"center"}
+            fontWeight={"bold"}
+            color="gray.500"
+          >
+            No products found :/
+            <Link as={RouterLink} to={"/create"}>
+              <Text
+                marginStart={"15px"}
+                as={"span"}
+                color={"blue.500"}
+                _hover={{ textDecoration: "underline" }}
+              >
+                Create a Product
+              </Text>
+            </Link>
+          </Text>
+        )}
       </VStack>
+      <Toaster/>
     </Container>
   );
 };

@@ -1,5 +1,6 @@
 import {
   Box,
+  Flex,
   Heading,
   HStack,
   IconButton,
@@ -96,9 +97,15 @@ const ProductCard = ({ product }) => {
               <Dialog.Backdrop />
               <Dialog.Positioner>
                 <Dialog.Content>
-                  <Dialog.Header>
+                  <Dialog.Header
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
                     <Dialog.Title>Edit Product</Dialog.Title>
+                    <CloseButton size="sm" onClick={() => setIsOpen(false)} />
                   </Dialog.Header>
+
                   <Dialog.Body>
                     <Heading as={"h3"} size={"md"} mb={2}>
                       Product Name:
@@ -147,13 +154,11 @@ const ProductCard = ({ product }) => {
                     />
                   </Dialog.Body>
                   <Dialog.Footer>
-                    <Dialog.ActionTrigger asChild>
-                      <Button variant="outline">Cancel</Button>
-                    </Dialog.ActionTrigger>
+                    <Button onClick={() => setIsOpen(false)}>Close</Button>
                     <Button
-                      bgColor={useColorModeValue("blue.400", "blue.600")}
+                      bgColor={useColorModeValue("blue.500", "blue.600")}
                       _hover={{
-                        bgColor: useColorModeValue("blue.500", "blue.700"),
+                        bgColor: useColorModeValue("blue.400", "blue.700"),
                       }}
                       onClick={() =>
                         handleUpdateProduct(product._id, updatedProduct)
@@ -162,9 +167,6 @@ const ProductCard = ({ product }) => {
                       Save
                     </Button>
                   </Dialog.Footer>
-                  <Dialog.CloseTrigger asChild>
-                    <CloseButton size="sm" />
-                  </Dialog.CloseTrigger>
                 </Dialog.Content>
               </Dialog.Positioner>
             </Portal>

@@ -30,7 +30,26 @@ export const useProductStore = create((set) => ({
     const data = await res.json();
     if (!data.success) return { success: false, message: data.message };
     set((state) => ({
+      // Updates UI immediately WITHOUT refreshing
       products: state.products.filter((product) => product._id !== pid),
+    }));
+    return { success: true, message: data.message };
+  },
+  updateProduct: async (pid, updatedProduct) => {
+    const res = await fetch(`/api/products/${pid}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedProduct),
+    });
+    const data = await res.json();
+    if (!data.success) return { success: false, message: data.message };
+    // Updates UI immediately WITHOUT refreshing
+    set((state) => ({
+      products: state.products.map((product) =>
+        product._id === pid ? data.data : product
+      ),
     }));
     return { success: true, message: data.message };
   },

@@ -15,35 +15,49 @@ import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
 import { useState } from "react";
 
 const ProductCard = ({ product }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const textColor = useColorModeValue("gray.600", "gray.200");
   const bg = useColorModeValue("white", "gray.800");
-  const { deleteProduct, updateProduct } = useProductStore();
+  const { deleteProduct } = useProductStore();
   const [updatedProduct, setUpdatedProduct] = useState(product);
-
   const handleDeleteProduct = async (pid) => {
-    const { success } = await deleteProduct(pid);
-    toaster.create({
-      description: success
-        ? "Product deleted successfully!"
-        : "Error deleting product!",
-      type: success ? "success" : "error",
-      duration: 3000,
-      closable: true,
-    });
+    const { success, message } = await deleteProduct(pid);
+    if (!success) {
+      toaster.create({
+        description: "Error deleting product!",
+        type: "error",
+        duration: 3000,
+        closable: true,
+      });
+    } else
+      toaster.create({
+        description: "Product deleted succesfully!",
+        type: "success",
+        duration: 3000,
+        closable: true,
+      });
   };
-
+  const { updateProduct } = useProductStore();
   const handleUpdateProduct = async (pid, updatedProduct) => {
-    const { success } = await updateProduct(pid, updatedProduct);
-    toaster.create({
-      description: success
-        ? "Product updated successfully!"
-        : "Error updating product!",
-      type: success ? "success" : "error",
-      duration: 3000,
-      closable: true,
-    });
+    const { success, message } = await updateProduct(pid, updatedProduct);
+    if (!success) {
+      toaster.create({
+        description: "Error updating product!",
+        type: "error",
+        duration: 3000,
+        closable: true,
+      });
+    } else {
+      toaster.create({
+        title: "Success",
+        description: "Product updated succesfully!",
+        type: "success",
+        duration: 3000,
+        closable: true,
+      });
+      setIsOpen(false);
+    }
   };
-
   return (
     <Box
       shadow={"lg"}
@@ -68,7 +82,7 @@ const ProductCard = ({ product }) => {
           ${product.price}
         </Text>
         <HStack>
-          <Dialog.Root>
+          <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
             <Dialog.Trigger asChild>
               <IconButton
                 aria-label="Edit product"
@@ -84,11 +98,7 @@ const ProductCard = ({ product }) => {
                 <Dialog.Content>
                   <Dialog.Header>
                     <Dialog.Title>Edit Product</Dialog.Title>
-                    <Dialog.CloseTrigger asChild>
-                      <CloseButton size="sm" />
-                    </Dialog.CloseTrigger>
                   </Dialog.Header>
-
                   <Dialog.Body>
                     <Heading as={"h3"} size={"md"} mb={2}>
                       Product Name:
@@ -96,6 +106,7 @@ const ProductCard = ({ product }) => {
                     <Input
                       mb={5}
                       placeholder="Product name"
+                      name="name"
                       value={updatedProduct.name}
                       onChange={(e) =>
                         setUpdatedProduct({
@@ -104,28 +115,28 @@ const ProductCard = ({ product }) => {
                         })
                       }
                     />
-
                     <Heading as={"h3"} size={"md"} mb={2}>
                       Product Price:
                     </Heading>
                     <Input
                       mb={5}
                       placeholder="Product Price"
-                      value={updatedProduct.price}
+                      name="price"
                       onChange={(e) =>
                         setUpdatedProduct({
                           ...updatedProduct,
                           price: e.target.value,
                         })
                       }
+                      value={updatedProduct.price}
                     />
-
                     <Heading as={"h3"} size={"md"} mb={2}>
                       Product Image:
                     </Heading>
                     <Input
                       mb={5}
                       placeholder="Product Image URL"
+                      name="image"
                       value={updatedProduct.image}
                       onChange={(e) =>
                         setUpdatedProduct({
@@ -135,31 +146,29 @@ const ProductCard = ({ product }) => {
                       }
                     />
                   </Dialog.Body>
-
                   <Dialog.Footer>
-                    <Dialog.CloseTrigger asChild>
+                    <Dialog.ActionTrigger asChild>
                       <Button variant="outline">Cancel</Button>
-                    </Dialog.CloseTrigger>
-
-                    <Dialog.CloseTrigger asChild>
-                      <Button
-                        bgColor={useColorModeValue("blue.400", "blue.600")}
-                        _hover={{
-                          bgColor: useColorModeValue("blue.500", "blue.700"),
-                        }}
-                        onClick={() =>
-                          handleUpdateProduct(product._id, updatedProduct)
-                        }
-                      >
-                        Save
-                      </Button>
-                    </Dialog.CloseTrigger>
+                    </Dialog.ActionTrigger>
+                    <Button
+                      bgColor={useColorModeValue("blue.400", "blue.600")}
+                      _hover={{
+                        bgColor: useColorModeValue("blue.500", "blue.700"),
+                      }}
+                      onClick={() =>
+                        handleUpdateProduct(product._id, updatedProduct)
+                      }
+                    >
+                      Save
+                    </Button>
                   </Dialog.Footer>
+                  <Dialog.CloseTrigger asChild>
+                    <CloseButton size="sm" />
+                  </Dialog.CloseTrigger>
                 </Dialog.Content>
               </Dialog.Positioner>
             </Portal>
           </Dialog.Root>
-
           <IconButton
             aria-label="Delete product"
             onClick={() => handleDeleteProduct(product._id)}
